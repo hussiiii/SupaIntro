@@ -9,7 +9,7 @@ export function useTodos() {
   const fetchTodos = useCallback(async () => {
     setIsLoading(true)
     try {
-      const response = await fetch('/api/todos', {
+      const response = await fetch('/api/todos/getAllTodos', {
         credentials: 'include'
       })
       if (!response.ok) throw new Error('Failed to fetch todos')
@@ -24,7 +24,7 @@ export function useTodos() {
 
   const addTodo = async (content: string) => {
     try {
-      const response = await fetch('/api/todos', {
+      const response = await fetch('/api/todos/createTodo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -39,10 +39,11 @@ export function useTodos() {
 
   const updateTodo = async (id: string, updates: Partial<Todo>) => {
     try {
-      const response = await fetch(`/api/todos/${id}`, {
-        method: 'PUT',
+      const response = await fetch('/api/todos/updateTodo', {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updates)
+        credentials: 'include',
+        body: JSON.stringify({ id, ...updates })
       })
       if (!response.ok) throw new Error('Failed to update todo')
       await fetchTodos()
@@ -53,8 +54,11 @@ export function useTodos() {
 
   const deleteTodo = async (id: string) => {
     try {
-      const response = await fetch(`/api/todos/${id}`, {
-        method: 'DELETE'
+      const response = await fetch('/api/todos/deleteTodo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ id })
       })
       if (!response.ok) throw new Error('Failed to delete todo')
       await fetchTodos()
